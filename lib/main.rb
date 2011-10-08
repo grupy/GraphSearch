@@ -227,37 +227,29 @@ end
     graf.renew
 end
 
-$hotovo=Fronta.new
-$processed=Fronta.new
 $pocatek
-
-def dfs_recurse(graf,pocatek)
-  $hotovo=Fronta.new
-  $processed=Fronta.new
-print pocatek
-$pocatek=pocatek
-  recurse(graf,pocatek)
-puts ""
-end
 
 def recurse(graf,pocatek)
   uzel=getUzelPodleHodnoty(graf, pocatek)
 
-    if  $processed.include?(uzel) or $hotovo.include?(uzel) then
-      return
-    else
-      $processed.push(uzel)
-      i=0
-      recurse(graf,uzel.sousedi[0]);
-      if uzel.cislo!=$pocatek then print " #{uzel.cislo}" end
-      $hotovo.push(uzel)
-      uzel.sousedi.each{|u|
-      if i>0 then
-      recurse(graf,u);
-      end
-      i+=1
-      }
-   end
+  if $pocatek!=pocatek then    print " #{pocatek}" end
+    uzel.stav = 0
+    uzel.sousedi.each{ |v|
+        pom=getUzelPodleHodnoty(graf,v)
+        if pom.stav == 1
+         recurse(graf,v)
+        end
+    }
+    uzel.stav = -1
+
+end
+
+def dfs_recurse(graf,pocatek)
+  $pocatek=pocatek
+  print pocatek
+    recurse(graf, pocatek)
+    puts ""
+    graf.renew
 end
 
 
@@ -266,6 +258,5 @@ pocet_grafu = gets.to_i
 g = Graph.new
 pocet_grafu.to_i.times{|i|
   puts "graph #{i+1}"
-
 solve()
 }
