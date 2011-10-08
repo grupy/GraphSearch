@@ -78,21 +78,16 @@ class Zasobnik
     return @pole.include?(prvek)
   end
 end
-def solve(file)
-f = File.open(file,"r")
-pocet_grafu = f.readline();
-g = Graph.new
-pocet_grafu.to_i.times{|i|
-  puts "graph #{i+1}"
+def solve
   g=Graph.new
-    pocet_uzlu = f.readline().to_i
+  pocet_uzlu = gets.to_i
     pocet_uzlu.times { |j|
-          line = f.gets
+          line = gets
           pole = line.split(" ")
           v = Vertex.new(pole);
           g.append(v)
            }
-      while line = f.gets
+      while line = gets
         if line=="0 0" or line=="0 0\n"  then break
         else
         zadani = line.split(" ")
@@ -102,8 +97,6 @@ pocet_grafu.to_i.times{|i|
 
          end
       end
-}
-
 end
 def getUzelPodleHodnoty(graf,hodnota)
   if hodnota=='0' then return end
@@ -169,5 +162,11 @@ close = Fronta.new
     puts""
 end
 
-solve("graf")
+vstup = String.new
+pocet_grafu = gets.to_i
+g = Graph.new
+pocet_grafu.to_i.times{|i|
+  puts "graph #{i+1}"
 
+solve()
+}
