@@ -105,29 +105,27 @@ def solve
         zadani = line.split(" ")
         
         if zadani[1]=="1" then bfs(g,zadani[0])
-        else dfs_recurse(g,zadani[0]) end
+        else dfs_one_stack_only(g,zadani[0]) end
 
          end
       end
 end
-def getUzelPodleHodnoty(graf,hodnota)
-  if hodnota=='0' then return end
-  graf.uzly.each_with_index { |v,i| if v.cislo==hodnota then
-       return graf.uzly[i]
-    end  }
+def get_uzel(graf,hodnota)
+  if hodnota=='0' then return 
+  else return graf.uzly[hodnota.to_i-1]
+  end
 end
 
 def bfs(graf, pocatek)
   open= Fronta.new
   close= Fronta.new
-  open.push(getUzelPodleHodnoty(graf, pocatek))
+  open.push(get_uzel(graf, pocatek))
   print pocatek
   while !open.empty?
     uzel=open.pop
     
-      
-        uzel.sousedi.each { |u|
-        pom = getUzelPodleHodnoty(graf, u);
+       uzel.sousedi.each { |u|
+        pom = get_uzel(graf, u);
         if !close.include?(pom) && !open.include?(pom) && pom!=nil then
                 print " #{pom.cislo}"
                 open.push(pom);
@@ -140,34 +138,35 @@ def bfs(graf, pocatek)
  end
  puts ""
 end
-
 def dfs(graf, pocatek)
 fresh = Zasobnik.new
 open = Zasobnik.new
 close = Zasobnik.new
 
   mamZustatOpen=false
-  uzel = getUzelPodleHodnoty(graf, pocatek)
+  uzel = get_uzel(graf, pocatek)
   fresh.push(uzel);
 
   print pocatek
   while !fresh.empty?||!open.empty?
       if fresh.empty? then uzel=open.pop
       else uzel=fresh.pop
+
+      if uzel.cislo!=pocatek then print " #{uzel.cislo}" end
       end
       ss=uzel.sousedi.reverse
-      ss.each { |i|
-          pom=getUzelPodleHodnoty(graf, i);
-          if !close.include?(pom) and !open.include?(pom) and !fresh.include?(pom) then
-            
+        ss.each { |i|
+          pom=get_uzel(graf, i);
+          if !close.include?(pom) and !open.include?(pom) then
+                  fresh.poll(pom.cislo)
                   fresh.push(pom)
                   mamZustatOpen=true
+                  
           end
       }
       if mamZustatOpen==true then
         open.push(uzel)
         else close.push(uzel)
-          if uzel.cislo!=pocatek then print " #{uzel.cislo}" end
       end
       mamZustatOpen=false
     end
@@ -178,7 +177,7 @@ s=Zasobnik.new
 help=[]
   print pocatek
   repeat_self, pridal_jsem=false, false
-  uzel = getUzelPodleHodnoty(graf, pocatek)
+  uzel = get_uzel(graf, pocatek)
   s.push(uzel);
 
   while !s.empty?
@@ -191,7 +190,7 @@ help=[]
     else
       ss=uzel.sousedi.reverse
       ss.each { |u|
-        pom=getUzelPodleHodnoty(graf, u)
+        pom=get_uzel(graf, u)
         if pom.stav>=0 then
           if s.include?(pom) then
             s.poll(u)
@@ -209,7 +208,7 @@ help=[]
         end
         
       help.reverse!.each{|f|
-        s.push(getUzelPodleHodnoty(graf, f))
+        s.push(get_uzel(graf, f))
       }
       if pridal_jsem==true then
         else
@@ -229,20 +228,19 @@ end
 $pocatek
 
 def recurse(graf,pocatek)
-  uzel=getUzelPodleHodnoty(graf, pocatek)
+  uzel=get_uzel(graf, pocatek)
 
   if $pocatek!=pocatek then    print " #{pocatek}" end
     uzel.stav = 0
     uzel.sousedi.each{ |v|
-        pom=getUzelPodleHodnoty(graf,v)
+        pom=get_uzel(graf,v)
         if pom.stav == 1
          recurse(graf,v)
         end
     }
-    uzel.stav = -1
+    uzel.stav = 0
 
 end
-
 def dfs_recurse(graf,pocatek)
   $pocatek=pocatek
   print pocatek
