@@ -22,9 +22,8 @@ class Vertex
   def initialize (pole)
     @cislo = pole[0]
     pole1=[]
-    pole.each { |e| if e!=@cislo then pole1.push(e) end}
-    pole1.uniq!
-    @sousedi = pole1.sort!
+    pole.each_with_index {  |e,i| if i>1 then pole1.push(e) end}
+    @sousedi = pole1
     @stav=1
   end
   def cislo
