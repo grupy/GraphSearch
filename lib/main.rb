@@ -106,7 +106,7 @@ def solve
         zadani = line.split(" ")
         
         if zadani[1]=="1" then bfs(g,zadani[0])
-        else dfs_one_stack_only(g,zadani[0]) end
+        else dfs_recurse(g,zadani[0]) end
 
          end
       end
@@ -225,6 +225,39 @@ help=[]
 end
     puts""
     graf.renew
+end
+
+$hotovo=Fronta.new
+$processed=Fronta.new
+$pocatek
+
+def dfs_recurse(graf,pocatek)
+  $hotovo=Fronta.new
+  $processed=Fronta.new
+print pocatek
+$pocatek=pocatek
+  recurse(graf,pocatek)
+puts ""
+end
+
+def recurse(graf,pocatek)
+  uzel=getUzelPodleHodnoty(graf, pocatek)
+
+    if  $processed.include?(uzel) or $hotovo.include?(uzel) then
+      return
+    else
+      $processed.push(uzel)
+      i=0
+      recurse(graf,uzel.sousedi[0]);
+      if uzel.cislo!=$pocatek then print " #{uzel.cislo}" end
+      $hotovo.push(uzel)
+      uzel.sousedi.each{|u|
+      if i>0 then
+      recurse(graf,u);
+      end
+      i+=1
+      }
+   end
 end
 
 
