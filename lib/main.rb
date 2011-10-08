@@ -10,6 +10,7 @@ class Graph
     @uzly
   end
 end
+
 class Vertex
   @cislo
   @sousedi
@@ -31,8 +32,49 @@ class Vertex
     @stav=newStav
   end
   def stav
+    @stav
   end
   end
+class Fronta
+  @pole
+  def initialize()
+    @pole=Array.new
+  end
+  def pop
+    prvek = @pole[0]
+    @pole.delete_at(0)
+    return prvek
+  end
+  def push(prvek)
+    @pole.push(prvek)
+  end
+  def empty?
+    return @pole.empty?
+  end
+  def include?(prvek)
+    return @pole.include?(prvek)
+  end
+end
+class Zasobnik
+  @pole
+  def initialize()
+    @pole = Array.new
+  end
+  def pop
+    prvek = @pole.at(@pole.length-1)
+    @pole.delete_at(@pole.length-1)
+    return prvek
+  end
+  def push(prvek)
+    @pole.push(prvek)
+  end
+  def empty?
+    return @pole.empty?
+  end
+  def include?(prvek)
+    return @pole.include?(prvek)
+  end
+end
 
 
 def solve(file)
@@ -64,33 +106,59 @@ pocet_grafu.to_i.times{|i|
 end
 
 def getUzelPodleHodnoty(graf,hodnota)
-  graf.uzly.each { |kl| if kl.cislo==hodnota then return kl end }
+  if hodnota=='0' then return end
+  graf.uzly.each_with_index { |v,i| if v.cislo==hodnota then
+       return graf.uzly[i]
+    end  }
 end
 
+
 def bfs(graf, pocatek)
-  open= Array.new
-  close= Array.new
+  open= Fronta.new
+  close= Fronta.new
   open.push(getUzelPodleHodnoty(graf, pocatek))
   
   while !open.empty?
-    uzel=open.pop;
-    puts uzel
-    puts uzel.cislo
+    uzel=open.pop
+    print "#{uzel.cislo} "
+
         uzel.sousedi.each { |u|
         pom = getUzelPodleHodnoty(graf, u);
-        if !close.include?(pom) && !open.include?(pom) then
+        if !close.include?(pom) && !open.include?(pom) && pom!=nil then
 
                 open.push(pom);
                 
         end
            }
+    
     close.push(uzel);
 
  end
+ puts ""
 end
 
 def dfs(graf, pocatek)
-  puts "ZACINAM DFS z uzlu #{pocatek} nasledujue vypis uzlu v:"
+  open= Zasobnik.new
+  close= Zasobnik.new
+  open.push(getUzelPodleHodnoty(graf, pocatek))
+
+  while !open.empty?
+    uzel=open.pop
+    print "#{uzel.cislo} "
+
+        uzel.sousedi.each { |u|
+        pom = getUzelPodleHodnoty(graf, u);
+        if !close.include?(pom) && !open.include?(pom) && pom!=nil then
+
+                open.push(pom);
+
+        end
+           }
+
+    close.push(uzel);
+
+ end
+ puts ""
   end
 
 
