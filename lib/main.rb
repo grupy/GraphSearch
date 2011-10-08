@@ -9,6 +9,11 @@ class Graph
   def uzly
     @uzly
   end
+  def renew
+    @uzly.each{|u|
+      u.stav=(1)
+    }
+  end
 end
 class Vertex
   @cislo
@@ -39,9 +44,6 @@ class Fronta
   @pole
   def initialize()
     @pole=Array.new
-  end
-  def pole
-    @pole
   end
   def pop
     prvek = @pole[0]
@@ -77,6 +79,17 @@ class Zasobnik
   def include?(prvek)
     return @pole.include?(prvek)
   end
+  def poll(prvek)
+    indexy=[]
+   @pole.each_with_index{|u,i|
+     if u.cislo==prvek then
+      indexy.push(i)
+     end
+   }
+   indexy.each{|i|
+     @pole.delete_at(i)
+   }
+  end
 end
 def solve
   g=Graph.new
@@ -93,7 +106,7 @@ def solve
         zadani = line.split(" ")
         
         if zadani[1]=="1" then bfs(g,zadani[0])
-        else dfs(g,zadani[0]) end
+        else dfs_one_stack_only(g,zadani[0]) end
 
          end
       end
@@ -130,9 +143,9 @@ def bfs(graf, pocatek)
 end
 
 def dfs(graf, pocatek)
-fresh = Fronta.new
-open = Fronta.new
-close = Fronta.new
+fresh = Zasobnik.new
+open = Zasobnik.new
+close = Zasobnik.new
 
   mamZustatOpen=false
   uzel = getUzelPodleHodnoty(graf, pocatek)
@@ -143,8 +156,8 @@ close = Fronta.new
       if fresh.empty? then uzel=open.pop
       else uzel=fresh.pop
       end
-        
-      uzel.sousedi.each { |i|  
+      ss=uzel.sousedi.reverse
+      ss.each { |i|
           pom=getUzelPodleHodnoty(graf, i);
           if !close.include?(pom) and !open.include?(pom) and !fresh.include?(pom) then
             
@@ -161,6 +174,59 @@ close = Fronta.new
     end
     puts""
 end
+def dfs_one_stack_only(graf, pocatek)
+s=Zasobnik.new
+help=[]
+  print pocatek
+  repeat_self, pridal_jsem=false, false
+  uzel = getUzelPodleHodnoty(graf, pocatek)
+  s.push(uzel);
+
+  while !s.empty?
+    uzel= s.pop
+    if uzel.stav==0 then
+      uzel.stav=(-1)
+      if uzel.cislo!=pocatek then
+        print " #{uzel.cislo}"
+      end
+    else
+      ss=uzel.sousedi.reverse
+      ss.each { |u|
+        pom=getUzelPodleHodnoty(graf, u)
+        if pom.stav>=0 then
+          if s.include?(pom) then
+            s.poll(u)
+            help.push(u)
+          else
+            s.push(pom)
+            repeat_self=true
+            pridal_jsem=true
+            uzel.stav=(0)
+          end
+        end
+    }
+     if repeat_self==true then
+          s.push(uzel)
+        end
+        
+      help.reverse!.each{|f|
+        s.push(getUzelPodleHodnoty(graf, f))
+      }
+      if pridal_jsem==true then
+        else
+          if uzel.stav==1 then print" #{uzel.cislo}"
+            uzel.stav=(-1)
+          end
+      end
+      help=[]
+      repeat_self=false
+      pridal_jsem=false
+    end
+end
+    puts""
+    graf.renew
+end
+
 
 vstup = String.new
 pocet_grafu = gets.to_i
