@@ -10,7 +10,6 @@ class Graph
     @uzly
   end
 end
-
 class Vertex
   @cislo
   @sousedi
@@ -18,8 +17,9 @@ class Vertex
   def initialize (pole)
     @cislo = pole[0]
     pole1=[]
-    pole.each_with_index { |e, i| if i>0 then pole1[i-1]=e end}
-    @sousedi = pole1
+    pole.each { |e| if e!=@cislo then pole1.push(e) end}
+    pole1.uniq!
+    @sousedi = pole1.sort!
     @stav=1
   end
   def cislo
@@ -39,6 +39,9 @@ class Fronta
   @pole
   def initialize()
     @pole=Array.new
+  end
+  def pole
+    @pole
   end
   def pop
     prvek = @pole[0]
@@ -75,14 +78,12 @@ class Zasobnik
     return @pole.include?(prvek)
   end
 end
-
-
 def solve(file)
 f = File.open(file,"r")
 pocet_grafu = f.readline();
 g = Graph.new
 pocet_grafu.to_i.times{|i|
-  puts "Graph #{i+1}"
+  puts "graph #{i+1}"
   g=Graph.new
     pocet_uzlu = f.readline().to_i
     pocet_uzlu.times { |j|
@@ -104,7 +105,6 @@ pocet_grafu.to_i.times{|i|
 }
 
 end
-
 def getUzelPodleHodnoty(graf,hodnota)
   if hodnota=='0' then return end
   graf.uzly.each_with_index { |v,i| if v.cislo==hodnota then
@@ -112,22 +112,21 @@ def getUzelPodleHodnoty(graf,hodnota)
     end  }
 end
 
-
 def bfs(graf, pocatek)
   open= Fronta.new
   close= Fronta.new
   open.push(getUzelPodleHodnoty(graf, pocatek))
-  
+  print pocatek
   while !open.empty?
     uzel=open.pop
-    print "#{uzel.cislo} "
-
+    
+      
         uzel.sousedi.each { |u|
         pom = getUzelPodleHodnoty(graf, u);
         if !close.include?(pom) && !open.include?(pom) && pom!=nil then
-
+                print " #{pom.cislo}"
                 open.push(pom);
-                
+        
         end
            }
     
@@ -138,29 +137,37 @@ def bfs(graf, pocatek)
 end
 
 def dfs(graf, pocatek)
-  open= Zasobnik.new
-  close= Zasobnik.new
-  open.push(getUzelPodleHodnoty(graf, pocatek))
+fresh = Fronta.new
+open = Fronta.new
+close = Fronta.new
 
-  while !open.empty?
-    uzel=open.pop
-    print "#{uzel.cislo} "
+  mamZustatOpen=false
+  uzel = getUzelPodleHodnoty(graf, pocatek)
+  fresh.push(uzel);
 
-        uzel.sousedi.each { |u|
-        pom = getUzelPodleHodnoty(graf, u);
-        if !close.include?(pom) && !open.include?(pom) && pom!=nil then
-
-                open.push(pom);
-
-        end
-           }
-
-    close.push(uzel);
-
- end
- puts ""
-  end
-
+  print pocatek
+  while !fresh.empty?||!open.empty?
+      if fresh.empty? then uzel=open.pop
+      else uzel=fresh.pop
+      end
+        
+      uzel.sousedi.each { |i|  
+          pom=getUzelPodleHodnoty(graf, i);
+          if !close.include?(pom) and !open.include?(pom) and !fresh.include?(pom) then
+            
+                  fresh.push(pom)
+                  mamZustatOpen=true
+          end
+      }
+      if mamZustatOpen==true then
+        open.push(uzel)
+        else close.push(uzel)
+          if uzel.cislo!=pocatek then print " #{uzel.cislo}" end
+      end
+      mamZustatOpen=false
+    end
+    puts""
+end
 
 solve("graf")
 
